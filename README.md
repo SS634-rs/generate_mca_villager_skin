@@ -8,6 +8,20 @@
 
 MCA村人はSteveと同じモデルであるため、プレイヤーのスキンとしても使用可能です。
 
+このツールはJupyter notebookで動作します。
+
+## 前提条件
+
+Pythonのバージョンは3.12以降推奨です。
+
+requirements.txtを使用して、必要なライブラリをインストールしてください。
+
+```sh
+python -m pip install -r requirements.txt
+```
+
+ツールの使用方法はnotebookに記載されています。
+
 ## ライセンス
 
 このツールの元ネタとなったMCA Rebornは、GPL3ライセンスで提供されています。

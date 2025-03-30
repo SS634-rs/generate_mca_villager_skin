@@ -17,11 +17,24 @@ class Gender(IntEnum):
 class SkinInfo:
     def __init__(self, **kwargs: Dict[str, Any]) -> None:
         self.param = kwargs
+        self.__param_value_range = {
+            "gender": "1 or 2",
+            "hetero": "True or False",
+            "albinism": "True or False",
+            "hemoglobin": "0.0 ~ 1.0",
+            "melanin": "0.0 ~ 1.0",
+            "eumelanin": "0.0 ~ 1.0",
+            "pheomelanin": "0.0 ~ 1.0",
+            "hair_color_blue": "0.0 ~ 1.0",
+            "hair_color_green": "0.0 ~ 1.0",
+            "hair_color_red": "0.0 ~ 1.0",
+            "clothing": "-",
+        }
         return
 
     def __str__(self) -> str:
         out = f"性別: {const.GENDER_TABLE[self.__convert_gender_name()]}\n"
-        out += f"職業: {const.PROFESSION_TABLE[self.param['profession']]}\n"
+        out += f"職業: {const.PROFESSION_TABLE[self.__get_profession()]}\n"
         out += "特性:"
 
         if self.param["hetero"]:
@@ -36,13 +49,18 @@ class SkinInfo:
         return out
 
     def to_dataframe(self) -> pd.DataFrame:
-        data = {"key": [], "value": []}
+        data = {"パラメータ名": [], "説明": [], "値": [], "値の範囲": []}
 
         for key in self.param.keys():
-            data["key"].append(key)
-            data["value"].append(self.param[key])
+            data["パラメータ名"].append(key)
+            data["説明"].append(const.PARAM_DESC_LIST[key])
+            data["値"].append(self.param[key])
+            data["値の範囲"].append(self.__param_value_range[key])
 
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        styles = [dict(selector="th", props=[("text-align", "left")])]
+        df = df.style.set_properties(**{"text-align": "left"}).set_table_styles(styles)
+        return df
 
     def generate_skin_info(self):
         # 性別の設定
@@ -81,7 +99,6 @@ class SkinInfo:
         cloth_gender = "neutral" if neutral == 0 else self.__convert_gender_name()
         cloth_list = self.__get_clothing_files(cloth_gender)
         self.param["clothing"] = cloth_list[rd.randrange(len(cloth_list))]
-        self.param["profession"] = self.__get_profession()
         return
 
     def __convert_gender_name(self) -> str:
@@ -117,6 +134,7 @@ class SkinInfo:
         ):
             self.param[key] = rd.randrange(max_count)
 
+        self.__param_value_range[key] = f"0 ~ {max_count - 1}"
         return
 
     def __set_pigment_param(
